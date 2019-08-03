@@ -1,0 +1,4 @@
+.idea/
+venv/
+.DS_Stors
+__pycache__/
