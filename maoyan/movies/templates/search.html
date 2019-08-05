@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Page</title>
+    <link href="/static/base.css" rel="stylesheet">
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <form action="{% url 'search' %}" method="GET">
+        <h3>Enter your search query</h3>
+        <input name="query" type="text"/>
+        {% csrf_token %}
+        <label>
+            <select name="condition">
+                <option value="movie_name">Movie Name</option>
+                <option value="release_year">Year</option>
+                <option value="stars">Actors</option>
+                <option value="score">Score</option>
+            </select>
+        </label>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+<div class="container">
+    {% if movies %}
+        <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Movie Name</th>
+                        <th>Movie Stars</th>
+                        <th>Release Time</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+            <tbody>
+            {% for movie in movies %}
+                <tr>
+                    <td>{{ movie.name }}</td>
+                    <td>{{ movie.stars }}</td>
+                    <td>{{ movie.release_time }}</td>
+                    <td>{{ movie.score }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Movie Name</th>
+                        <th>Movie Stars</th>
+                        <th>Release Time</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+        </table>
+    {% endif %}
+
+</div>
+</body>
+</html>

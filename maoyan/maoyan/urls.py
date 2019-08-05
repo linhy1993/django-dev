@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
     path('spider/', views.spider, name='spider'),
+    path('search/', views.search, name='search'),
 ]
