@@ -35,7 +35,12 @@ def search(request):
             return render(request, 'search.html', {'movies': movies_lst})
         elif condition == 'release_year':
             movies_lst = MaoyanMovie.objects.all().filter(release_time__year__gt=query).order_by('release_time')
-            return render(request, 'search.html', {'movies': movies_lst})
+            if movies_lst:
+                paginator = Paginator(movies_lst, 10)
+                if request.method == 'GET':
+                    page = request.GET.get('page')
+                    movies = paginator.get_page(page)
+                    return render(request, 'search.html', {'movies': movies, 'paginator': paginator, 'is_paginated': True})
         elif condition == 'stars':
             movies_lst = MaoyanMovie.objects.all().filter(stars__contains=query)
             return render(request, 'search.html', {'movies': movies_lst})

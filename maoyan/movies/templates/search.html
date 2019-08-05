@@ -11,7 +11,6 @@
     <form action="{% url 'search' %}" method="GET">
         <h3>Enter your search query</h3>
         <input name="query" type="text"/>
-        {% csrf_token %}
         <label>
             <select name="condition">
                 <option value="movie_name">Movie Name</option>
@@ -24,40 +23,58 @@
     </form>
 </div>
 <div class="container">
-    {% if movies %}
-        <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Movie Name</th>
-                        <th>Movie Stars</th>
-                        <th>Release Time</th>
-                        <th>Score</th>
-                    </tr>
-                </thead>
-            <tbody>
-            {% for movie in movies %}
+    <div class="container">
+    <h3 align="center" id="myheader">搜索结果</h3>
+    <table class="table table-striped">
+            <thead>
                 <tr>
-                    <td>{{ movie.name }}</td>
-                    <td>{{ movie.stars }}</td>
-                    <td>{{ movie.release_time }}</td>
-                    <td>{{ movie.score }}</td>
+                    <th>Movie Name</th>
+                    <th>Movie Stars</th>
+                    <th>Release Time</th>
+                    <th>Score</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <table class="table table-striped">
-                <thead>
+            </thead>
+            {% if movies %}
+                <tbody>
+                {% for movie in movies %}
                     <tr>
-                        <th>Movie Name</th>
-                        <th>Movie Stars</th>
-                        <th>Release Time</th>
-                        <th>Score</th>
+                        <td>{{ movie.name }}</td>
+                        <td>{{ movie.stars }}</td>
+                        <td>{{ movie.release_time }}</td>
+                        <td>{{ movie.score }}</td>
                     </tr>
-                </thead>
-        </table>
-    {% endif %}
+                {% endfor %}
+                </tbody>
+            {% endif %}
+    </table>
+    </div>
+    <div class="container" id="pages">
+    {% if is_paginated %}
+        <ul class="pagination">
+            {% if movies.has_previous %}
+                <li class="page-item"><a class="page-link" href="?query={{ request.GET.query }}&condition={{ request.GET.condition }}&page={{ movies.previous_page_number }}">Previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            {% endif %}
 
+            {% for i in paginator.page_range %}
+                {% if movies.number == i %}
+                    <li class="page-item active"><span class="page-link"> {{ i }} <span class="sr-only">(current)</span></span>
+                    </li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="?query={{ request.GET.query }}&condition={{ request.GET.condition }}&page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if movies.has_next %}
+                <li class="page-item"><a class="page-link" href="?query={{ request.GET.query }}&condition={{ request.GET.condition }}&page={{ movies.next_page_number }}">Next</a></li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Next</span></li>
+            {% endif %}
+        </ul>
+    {% endif %}
+    </div>
 </div>
 </body>
 </html>
