@@ -7,25 +7,27 @@
     <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1 align="center">Maoyan Movies Top 100</h1>
-    <div class="container">
-        <form action="{% url 'spider' %}" method="POST">
-            <button id="toggle" type="submit" class="btn btn-primary form-control" onclick="myFunction()">开始爬取</button>
-        </form>
-    </div>
-
-    <div class="container">
-        {% if movies %}
-            <h3 align="center">爬取结果</h3>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Movie Name</th>
-                        <th>Movie Stars</th>
-                        <th>Release Time</th>
-                        <th>Score</th>
-                    </tr>
-                </thead>
+<h1 align="center">Maoyan Movies Top 100</h1>
+<div class="container">
+    <form action="{% url 'spider' %}" method="POST">
+        {% csrf_token %}
+        <button id="toggle" type="submit" class="btn btn-primary form-control" onclick="myFunction()">开始爬取</button>
+    </form>
+</div>
+<div class="container" id="mymovies">
+    <div id="loader" style="display: none"></div>
+    <div class="container" id="movies">
+    {% if movies %}
+        <h3 align="center" id="myheader">爬取结果</h3>
+        <table class="table table-striped" id="mytable">
+            <thead>
+            <tr>
+                <th>Movie Name</th>
+                <th>Movie Stars</th>
+                <th>Release Time</th>
+                <th>Score</th>
+            </tr>
+            </thead>
             <tbody>
             {% for movie in movies %}
                 <tr>
@@ -36,46 +38,56 @@
                 </tr>
             {% endfor %}
             </tbody>
-            </table>
-        {% endif %}
+        </table>
+    {% endif %}
     </div>
-    <div class="container">
-        {% if is_paginated %}
-            <ul class="pagination">
-                {% if movies.has_previous %}
-                    <li class="page-item"><a class="page-link" href="?page={{ movies.previous_page_number }}">Previous</a></li>
-                {% else %}
-                    <li class="page-item disabled"><span class="page-link">Previous</span></li>
-                {% endif %}
+    <div class="container" id="pages">
+    {% if is_paginated %}
+        <ul class="pagination">
+            {% if movies.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ movies.previous_page_number }}">Previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            {% endif %}
 
-                {% for i in paginator.page_range %}
-                    {% if movies.number == i %}
-                        <li class="page-item active"><span class="page-link"> {{ i }} <span class="sr-only">(current)</span></span></li>
-                    {% else %}
-                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-                    {% endif %}
-                {% endfor %}
-
-                {% if movies.has_next %}
-                    <li class="page-item"><a class="page-link" href="?page={{ movies.next_page_number }}">Next</a></li>
+            {% for i in paginator.page_range %}
+                {% if movies.number == i %}
+                    <li class="page-item active"><span class="page-link"> {{ i }} <span class="sr-only">(current)</span></span>
+                    </li>
                 {% else %}
-                    <li class="page-item disabled"><span class="page-link">Next</span></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
                 {% endif %}
-            </ul>
-            <div>
-                <a href="/search" class="btn btn-default">Search</a>
-            </div>
-        {% endif %}
+            {% endfor %}
+
+            {% if movies.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ movies.next_page_number }}">Next</a></li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Next</span></li>
+            {% endif %}
+        </ul>
+        <div>
+            <a href="/search" class="btn btn-default">Search</a>
+        </div>
+    {% endif %}
     </div>
-    <script src="/static/jquery-3.4.1.min.js"></script>
-    <script>
-        function myFunction() {
-            var change = document.getElementById("toggle");
-            if (change.innerHTML === "开始爬取")
-            {
-                change.innerHTML = "正在爬取";
-            }
+</div>
+
+<script src="/static/jquery-3.4.1.min.js"></script>
+<script>
+    function myFunction() {
+        var change = document.getElementById("toggle");
+        var mytable = document.getElementById("mytable");
+        var pages = document.getElementById("pages");
+        var myheader = document.getElementById("myheader");
+        if (change.innerHTML === "开始爬取") {
+            change.innerHTML = "正在爬取";
+            mytable.innerHTML = "";
+            myheader.innerHTML = "";
+            pages.innerHTML = "";
+            document.getElementById('loader').style.display = "block";
         }
-    </script>
+    }
+</script>
 </body>
 </html>
