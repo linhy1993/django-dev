@@ -7,84 +7,93 @@
     <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<h1 align="center">Maoyan Movies Top 100</h1>
-<div class="container">
-    <form action="{% url 'spider' %}" method="POST">
-        {% csrf_token %}
-        <button id="toggle" type="submit" class="btn btn-primary form-control" onclick="myFunction()">开始爬取</button>
-    </form>
-</div>
-<div id="loader" style="display: none"></div>
-<div class="container" id="mymovies">
-    <div class="container" id="movies">
-    {% if movies %}
-        <h3 align="center" id="myheader">爬取结果</h3>
-        <table class="table table-striped" id="mytable">
-            <thead>
-            <tr>
-                <th>Movie Name</th>
-                <th>Movie Stars</th>
-                <th>Release Time</th>
-                <th>Score</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for movie in movies %}
-                <tr>
-                    <td>{{ movie.name }}</td>
-                    <td>{{ movie.stars }}</td>
-                    <td>{{ movie.release_time }}</td>
-                    <td>{{ movie.score }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+<div id="header"></div>
+<div id="body">
+    <h1 align="center">Maoyan Movies Top 100</h1>
+    <div class="container">
+        <form action="{% url 'spider' %}" method="POST">
+            {% csrf_token %}
+            <button id="toggle" type="submit" class="btn btn-primary form-control" onclick="myFunction()">开始爬取</button>
+        </form>
     </div>
-    <div class="container" id="pages">
-    {% if is_paginated %}
-        <ul class="pagination">
-            {% if movies.has_previous %}
-                <li class="page-item"><a class="page-link" href="?page={{ movies.previous_page_number }}">Previous</a>
-                </li>
-            {% else %}
-                <li class="page-item disabled"><span class="page-link">Previous</span></li>
-            {% endif %}
-
-            {% for i in paginator.page_range %}
-                {% if movies.number == i %}
-                    <li class="page-item active"><span class="page-link"> {{ i }} <span class="sr-only">(current)</span></span>
+    <div id="loader" style="display: none"></div>
+    <div class="container" id="mymovies">
+        <div class="container" id="movies">
+        {% if movies %}
+            <h3 align="center" id="myheader">爬取结果</h3>
+            <table class="table table-striped" id="mytable">
+                <thead>
+                <tr>
+                    <th width="20%">Movie Name</th>
+                    <th width="40%">Movie Stars</th>
+                    <th width="20%">Release Time</th>
+                    <th width="20%">Score</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for movie in movies %}
+                    <tr>
+                        <td>{{ movie.name }}</td>
+                        <td>{{ movie.stars }}</td>
+                        <td>{{ movie.release_time }}</td>
+                        <td>{{ movie.score }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        </div>
+        <div class="container" id="pages">
+        {% if is_paginated %}
+            <ul class="pagination">
+                {% if movies.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{ movies.previous_page_number }}">Previous</a>
                     </li>
                 {% else %}
-                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                    <li class="page-item disabled"><span class="page-link">Previous</span></li>
                 {% endif %}
-            {% endfor %}
 
-            {% if movies.has_next %}
-                <li class="page-item"><a class="page-link" href="?page={{ movies.next_page_number }}">Next</a></li>
-            {% else %}
-                <li class="page-item disabled"><span class="page-link">Next</span></li>
-            {% endif %}
-        </ul>
-        <div>
-            <a href="/search" class="btn btn-default">Search</a>
+                {% for i in paginator.page_range %}
+                    {% if movies.number == i %}
+                        <li class="page-item active"><span class="page-link"> {{ i }} <span class="sr-only">(current)</span></span>
+                        </li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if movies.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ movies.next_page_number }}">Next</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Next</span></li>
+                {% endif %}
+            </ul>
+            <div>
+                <a href="/search" class="btn btn-default">Search</a>
+            </div>
+        {% endif %}
         </div>
-    {% endif %}
     </div>
 </div>
+<div id="footer"></div>
+
 
 <script src="/static/jquery-3.4.1.min.js"></script>
 <script>
     function myFunction() {
+        // const change = $('toggler');
+        // const changeLcass = $('.class');
+        // chang.css('display', "block");
+        // change.hide();
+
+        debugger;
         var change = document.getElementById("toggle");
         var mytable = document.getElementById("mytable");
         var pages = document.getElementById("pages");
         var myheader = document.getElementById("myheader");
         if (change.innerHTML === "开始爬取") {
             change.innerHTML = "正在爬取";
-            mytable.innerHTML = "";
-            myheader.innerHTML = "";
-            pages.innerHTML = "";
+            $('.container').hide();
             document.getElementById('loader').style.display = "block";
         }
     }

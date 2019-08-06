@@ -25,6 +25,15 @@ def spider(request):
         return redirect('index')
 
 
+def show_pages(request, movies_lst):
+    if movies_lst:
+        paginator = Paginator(movies_lst, 10)
+        if request.method == 'GET':
+            page = request.GET.get('page')
+            movies = paginator.get_page(page)
+            return movies, paginator
+
+
 def search(request):
     if request.method == 'GET':
         query = request.GET.get('query')
@@ -35,16 +44,14 @@ def search(request):
             return render(request, 'search.html', {'movies': movies_lst})
         elif condition == 'release_year':
             movies_lst = MaoyanMovie.objects.all().filter(release_time__year__gt=query).order_by('release_time')
-            if movies_lst:
-                paginator = Paginator(movies_lst, 10)
-                if request.method == 'GET':
-                    page = request.GET.get('page')
-                    movies = paginator.get_page(page)
-                    return render(request, 'search.html', {'movies': movies, 'paginator': paginator, 'is_paginated': True})
+            movies, paginator = show_pages(request, movies_lst)
+            return render(request, 'search.html', {'movies': movies, 'paginator': paginator, 'is_paginated': True})
         elif condition == 'stars':
             movies_lst = MaoyanMovie.objects.all().filter(stars__contains=query)
-            return render(request, 'search.html', {'movies': movies_lst})
+            movies, paginator = show_pages(request, movies_lst)
+            return render(request, 'search.html', {'movies': movies, 'paginator': paginator, 'is_paginated': True})
         elif condition == 'score':
             movies_lst = MaoyanMovie.objects.all().filter(score__gt=query).order_by('-score')
-            return render(request, 'search.html', {'movies': movies_lst})
+            movies, paginator = show_pages(request, movies_lst)
+            return render(request, 'search.html', {'movies': movies, 'paginator': paginator, 'is_paginated': True})
     return render(request, 'search.html')
